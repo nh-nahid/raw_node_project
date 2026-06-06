@@ -3,19 +3,23 @@
 // dependencies
 const http = require('http');
 const { handleReqRes } = require('./helpers/handleReqRes');
+const environment = require('./helpers/environments');
+const data = require('./lib/data');
 
 // app object - scaffolding
 const app = {};
 
 // app config
-app.config = {
-    port: 3000,
-}
+
+data.delete('test', 'newFile', (err) => {
+    console.log( err);
+    
+})
 // create server
 app.createServer = () => {
     const server = http.createServer(app.handleReqRes);
-    server.listen(app.config.port, () => {
-        console.log(`lestening to port ${app.config.port}`);
+    server.listen(environment.port, () => {
+        console.log(`lestening to port ${environment.port}`);
     })
 }
 

@@ -2,7 +2,7 @@
 const data = require("../../lib/data");
 const { hash } = require("../../helpers/utilities");
 const { parseJSON } = require("../../helpers/utilities");
-
+const tokenHandler = require('./tokenHandler')
 // module scaffolding
 const handler = {};
 
@@ -93,6 +93,11 @@ handler._users.get = (requestProperties, callback) => {
       : false;
 
   if (phone) {
+    // verify token
+    let token = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false;
+
+    tokenHandler._token.verify(token, phone, (tokenId) => {
+        if(tokenId) {
     // lookup the user
     data.read("users", phone, (err, u) => {
       const user = { ...parseJSON(u) };
@@ -106,8 +111,14 @@ handler._users.get = (requestProperties, callback) => {
         });
       }
     });
+        } else {
+            callback(403, {
+                error: 'Authentication failed'
+            })
+        }
+    })
   } else {
-    callback(400, {
+    callback(404, {
       error: "Requested user was not found!",
     });
   }
@@ -141,7 +152,13 @@ handler._users.put = (requestProperties, callback) => {
 
   if (phone) {
     if (firstName || lastName || password) {
-      // lookup the user
+
+    // verify token
+    let token = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false;
+
+    tokenHandler._token.verify(token, phone, (tokenId) => {
+        if(tokenId) {
+             // lookup the user
       data.read("users", phone, (err, uData) => {
         const userData = parseJSON(uData);
 
@@ -175,6 +192,13 @@ handler._users.put = (requestProperties, callback) => {
           });
         }
       });
+        } else {
+            callback(403, {
+                error: 'Authentication failed'
+            })
+        }
+    })
+     
     } else {
       callback(400, {
         error: "You have a problem in your request!",
@@ -196,7 +220,12 @@ handler._users.delete = (requestProperties, callback) => {
       : false;
 
       if(phone) {
-        // loopup the user
+         // verify token
+    let token = typeof(requestProperties.headersObject.token) === 'string' ? requestProperties.headersObject.token : false;
+
+    tokenHandler._token.verify(token, phone, (tokenId) => {
+        if(tokenId) {
+      // loopup the user
 
         data.read('users', phone, (err1, userData) => {
             if(!err1 && userData){
@@ -217,6 +246,13 @@ handler._users.delete = (requestProperties, callback) => {
         })
             }
         })
+        } else {
+            callback(403, {
+                error: 'Authentication failed'
+            })
+        }
+    });
+      
       }else {
         callback(400, {
             error: "There was a problem in your request"

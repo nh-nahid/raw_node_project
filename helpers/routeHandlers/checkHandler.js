@@ -18,7 +18,24 @@ handler.checkHandler = (requestProperties, callback) => {
 handler._check = {};
 
 handler._check.post = (requestProperties, callback) => {
-  
+    // validate inputs
+    let protocol = typeof(requestProperties.body.protocol) === 'string' && ['http', 'https'].indexOf(requestProperties.body.protocol) > -1 ? requestProperties.body.protocol : false;
+
+    let url = typeof(requestProperties.body.url) === 'string' && requestProperties.body.url.trim().length > 0 ? requestProperties.body.url : false;
+
+    let method = typeof(requestProperties.body.method) === 'string' && ['get', 'post', 'put', 'delete'].indexOf(requestProperties.body.method) > -1 ? requestProperties.body.method : false;
+
+    let successCodes = typeof(requestProperties.body.successCodes) === 'object' && requestProperties.body.successCodes instanceof Array ? requestProperties.body.successCodes : false;
+
+    let timeoutSeconds = typeof(requestProperties.body.timeoutSeconds) === 'number' && requestProperties.body.timeoutSeconds % 1 === 0 && requestProperties.body.timeoutSeconds >= 1 && requestProperties.body.timeoutSeconds <= 5 ? requestProperties.body.successCodes : false;
+
+    if(protocol && url && method && successCodes && timeoutSeconds){
+        
+    } else {
+        callback(400, {
+            error: 'You have a problem in your request',
+        })
+    }
 };
 
 handler._check.get = (requestProperties, callback) => {

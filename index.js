@@ -1,4 +1,4 @@
-// Title: 
+// Title: Index file of the project
 
 // dependencies
 const server = require('./lib/server');

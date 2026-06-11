@@ -1,4 +1,5 @@
 // Title: Index file of the project
+// Author: Nahid Hossain
 
 // dependencies
 const server = require('./lib/server');
